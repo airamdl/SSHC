@@ -18,7 +18,7 @@ public class SSH {
       // Variables de configuración
     private static final String USERNAME = "alumno";
     private static final String HOST = "localhost";
-    private static final int PORT = 22;
+    private static final int PORT = 2232;
     private static final String PASSWORD = "Alumno1234";
     private static final String COMMAND = "ls -la"; 
 
@@ -51,19 +51,31 @@ class SSHConnector {
             throw new IllegalAccessException("Sesión SSH ya iniciada");
         }
     }
+    public void disconnect() {
+    if (this.session != null && this.session.isConnected()) {
+        this.session.disconnect();
+    }
+}
     
     public final void executeCommand(String command) throws IllegalAccessException, JSchException, IOException {
-        if (this.session != null && this.session.isConnected()) {
-            Channel channel = this.session.openChannel("exec");
-            ChannelExec channelExec = (ChannelExec) channel;
-            channelExec.setCommand(command);
-            channel.setInputStream(System.in);
-            channel.setOutputStream(System.out);
-            channel.connect(3 * 1000);
-            
-        } else {
-            throw new IllegalAccessException("No existe sesión SSH iniciada.");
+    if (this.session != null && this.session.isConnected()) {
+        ChannelExec channelExec = (ChannelExec) this.session.openChannel("exec");
+        channelExec.setCommand(command);
 
+        InputStream in = channelExec.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+       
+        channelExec.connect();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
         }
+
+        
+        channelExec.disconnect();
+    } else {
+        throw new IllegalAccessException("No existe sesión SSH iniciada.");
     }
+}
 }
