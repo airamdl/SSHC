@@ -18,7 +18,7 @@ public class SSH {
       // Variables de configuración
     private static final String USERNAME = "alumno";
     private static final String HOST = "localhost";
-    private static final int PORT = 2232;
+    private static final int PORT = 22;
     private static final String PASSWORD = "Alumno1234";
     private static final String COMMAND = "ls -la"; 
 
